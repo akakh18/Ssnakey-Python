@@ -1,43 +1,39 @@
-class Person:
-    # Constructor
-    def __init__(self, name: str, age: int) -> None:
-        self.name: str = name
-        self.age: int = age
-
-    def get_person_name(self) -> str:
-        return self.name
-
-    def get_person_age(self) -> int:
-        return self.age
-
-    def set_person_name(self, name: str) -> any:
-        return Person(name, self.age)
-
-    def set_person_age(self, age: int) -> any:
-        return Person(self.name, age)
+from typing import List, Dict
+import heapq
 
 
-def increase_person_age_by(person: Person, age: int) -> None:
-    person.set_person_age(person.get_person_age() + age)
+def solve(arr: List[int]) -> int:
+    freq: Dict[int, int] = dict()
+    for num in arr:
+        if num not in freq:
+            freq[num] = 1
+        else:
+            freq[num] += 1
+
+    counts: List[int] = list(freq.values())
+    heapq.heapify(counts)
+
+    while len(counts) > 1:
+        first: int = heapq.heappop(counts)
+        second: int = heapq.heappop(counts)
+
+        first -= 1
+        second -= 1
+        if first > 0:
+            heapq.heappush(counts, first)
+        if second > 0:
+            heapq.heappush(counts, second)
+    return counts[0] if len(counts) == 1 else 0
 
 
+# 1 1 2 2 3 3
+# 2 2 2
+# 1 1
+# 2 1 1
+# 2 1
+# 1 1
+#
 if __name__ == "__main__":
-    person_john = Person("John", 18)
-    person_avto = Person("Avto", 25)
-    print("John:")
-    print("Name:", person_john.get_person_name())
-    print("Age:", person_john.get_person_age())
-    print("Avto:")
-    print("Name:", person_avto.get_person_name())
-    print("Age:", person_avto.get_person_age())
-
-
-    increase_person_age_by(person_avto, 1)
-    print("Avto now:")
-    print("Name:", person_avto.get_person_name())
-    print("Age:", person_avto.get_person_age())
-
-    person_avto = person_avto.set_person_age(person_avto.get_person_age() + 1)
-    print("Avto now:")
-    print("Name:", person_avto.get_person_name())
-    print("Age:", person_avto.get_person_age())
+    print(solve([1, 3, 2, 3, 1, 2]) == 0)
+    print(solve([1, 2, 3]) == 1)
+    print(solve([1, 2, 3, 4]) == 0)
